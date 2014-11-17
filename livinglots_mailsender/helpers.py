@@ -15,6 +15,8 @@ def _mail_multiple(subject, message, email_addresses, from_email=None, cc=None,
     Sends a message to multiple email addresses. Based on
     django.core.mail.mail_admins()
     """
+    if not from_email:
+        from_email = settings.DEFAULT_FROM_EMAIL
     for email_address in email_addresses:
         mail = EmailMultiAlternatives(
             u'%s%s' % (settings.EMAIL_SUBJECT_PREFIX, subject),
