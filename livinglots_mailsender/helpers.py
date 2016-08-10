@@ -3,14 +3,19 @@ from django.core.mail.message import EmailMultiAlternatives
 from django.contrib.sites.models import Site
 
 
-def mail_multiple_personalized(subject, messages, **kwargs):
+def mail_multiple_personalized(subject, messages, html_messages=None, **kwargs):
     for email, message in messages.items():
-        _mail_multiple(subject, message, [email], **kwargs)
+        try:
+            html_message = html_messages[email]
+        except (AttributeError, KeyError, TypeError):
+            html_message = None
+        _mail_multiple(subject, message, [email], html_message=html_message,
+                       **kwargs)
 
 
 def _mail_multiple(subject, message, email_addresses, from_email=None, cc=None,
                    bcc=None, html_message=None, connection=None,
-                   fail_silently=True):
+                   fail_silently=True, **kwargs):
     """
     Sends a message to multiple email addresses. Based on
     django.core.mail.mail_admins()
